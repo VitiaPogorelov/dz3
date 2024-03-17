@@ -1,0 +1,52 @@
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string>
+
+void defineHeights(const std::string& member, const std::map<std::string, std::vector<std::string>>& childrenMap, std::map<std::string, int>& heights, int currentHeight) {
+    heights[member] = currentHeight;
+    auto it = childrenMap.find(member);
+    if (it != childrenMap.end()) {
+        for (const auto& child : it->second) {
+            defineHeights(child, childrenMap, heights, currentHeight + 1);
+        }
+    }
+}
+
+int main() {
+    // Ввод данных
+    int N; // Количество отношений в семье
+    std::cin >> N;
+
+    std::map<std::string, std::vector<std::string>> childrenMap;
+    std::map<std::string, int> heights;
+    std::map<std::string, bool> isChild;
+
+    for (int i = 0; i < N; ++i) {
+        std::string parent, child;
+        std::cin >> parent >> child;
+        childrenMap[parent].push_back(child);
+        isChild[child] = true;
+        if (!isChild[parent]) { // Если родитель еще не помечен как ребенок
+            isChild[parent] = false;
+        }
+    }
+
+    // Поиск родоначальника (того, кто не является ребенком)
+    std::string progenitor;
+    for (const auto& member : isChild) {
+        if (!member.second) { // Если не является ребенком
+            progenitor = member.first;
+            break;
+        }
+    }
+
+    // Определение высоты каждого члена семьи
+    defineHeights(progenitor, childrenMap, heights, 0);
+
+    for (const auto& member : heights) {
+        std::cout << member.first << " " << member.second << std::endl;
+    }
+
+    return 0;
+}
