@@ -1,0 +1,48 @@
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <vector>
+#include <string>
+
+void defineHeights(const std::string& member, const std::map<std::string, std::vector<std::string>>& childrenMap, std::map<std::string, int>& heights, int currentHeight) {
+    heights[member] = currentHeight;
+    auto it = childrenMap.find(member);
+    if (it != childrenMap.end()) {
+        for (const auto& child : it->second) {
+            defineHeights(child, childrenMap, heights, currentHeight + 1);
+        }
+    }
+}
+
+int main() {
+    std::ifstream input("tree.txt");
+    int N;
+    input >> N;
+
+    std::map<std::string, std::vector<std::string>> childrenMap;
+    std::map<std::string, int> heights;
+    std::map<std::string, std::string> parentMap;
+
+    for (int i = 0; i < N-1; ++i) {
+        std::string child, parent;
+        input >> child >> parent;
+        childrenMap[parent].push_back(child);
+        parentMap[child] = parent;
+    }
+
+    std::string progenitor;
+    for (const auto& pair : parentMap) {
+        if (parentMap.find(pair.second) == parentMap.end()) {
+            progenitor = pair.second;
+            break;
+        }
+    }
+
+    defineHeights(progenitor, childrenMap, heights, 0);
+
+    for (const auto& member : heights) {
+        std::cout << member.first << " " << member.second << std::endl;
+    }
+
+    return 0;
+}
