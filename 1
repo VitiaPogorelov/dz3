@@ -1,0 +1,36 @@
+#include <iostream>
+#include <set>
+#include <string>
+#include <unordered_set>
+
+bool searchWord(const std::unordered_set<std::string>& words, const std::string& word) {
+    return words.contains(word);
+}
+
+int main() {
+    std::unordered_set<std::string> words;
+    std::set<std::string> duplicate_words;
+    
+    std::string word;
+    while (std::cin >> word) {
+        if (words.contains(word)) {
+            duplicate_words.insert(word);
+        } else {
+            words.insert(word);
+        }
+    }
+    
+    for (const auto& word : duplicate_words) {
+        std::cout << word << "\n";
+    }
+
+    std::string search_term;
+    std::cout << "Введите слово для поиска: ";
+    std::cin >> search_term;
+
+    if (searchWord(words, search_term)) {
+        std::cout << "Слово '" << search_term << "' найдено.\n";
+    } else {
+        std::cout << "Слово '" << search_term << "' не найдено.\n";
+    }
+}
